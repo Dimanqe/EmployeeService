@@ -43,7 +43,6 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                     employee.Surname,
                     employee.Phone,
                     employee.CompanyId,
-
                     employee.DepartmentId,
                     employee.PassportType,
                     employee.PassportNumber
