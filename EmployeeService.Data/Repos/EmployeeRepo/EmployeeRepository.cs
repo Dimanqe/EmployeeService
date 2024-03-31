@@ -28,7 +28,7 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                 _dbConnection.Close();
         }
 
-        public async Task Create(Employee employee)
+        public async Task Create(Employee employee, Passport passport)
         {
             try
             {
@@ -36,6 +36,15 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                 const string employeeSql = @"
                     INSERT INTO Employees (Name, Surname, Phone, CompanyId, DepartmentId, PassportType, PassportNumber)
                     VALUES (@Name, @Surname, @Phone, @CompanyId, @DepartmentId, @PassportType, @PassportNumber)";
+                const string passportSql = @"
+                    INSERT INTO Passports (Type, Number)
+                    VALUES (@Type, @Number)";
+
+                await _dbConnection.ExecuteAsync(passportSql, new
+                {
+                    passport.Type,
+                    passport.Number
+                });
 
                 await _dbConnection.ExecuteAsync(employeeSql, new
                 {
@@ -44,8 +53,6 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                     employee.Phone,
                     employee.CompanyId,
                     employee.DepartmentId,
-                    employee.PassportType,
-                    employee.PassportNumber
                 });
             }
             catch (Exception ex)
@@ -113,10 +120,12 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                         E.Name,
                         E.Surname,
                         E.Phone,
-                        E.CompanyId,
+                        E.PassportId,
                         E.DepartmentId,
-                        E.PassportType,
-                        E.PassportNumber,
+                        E.CompanyId,
+                        P.Id AS Id,
+                        P.Type AS Type,
+                        P.Number AS Number,
                         D.Id AS Id,
                         D.Name AS Name,
                         D.Phone AS Phone,
@@ -125,18 +134,20 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                         C.Address AS Address,
                         C.Phone AS Phone
                     FROM Employees AS E
-                    LEFT JOIN Companies AS C ON E.CompanyId = C.Id
-                    LEFT JOIN Departments AS D ON E.DepartmentId = D.Id";
+                    LEFT JOIN Passports AS P ON E.CompanyId = P.Id
+                    LEFT JOIN Departments AS D ON E.DepartmentId = D.Id
+                    LEFT JOIN Companies AS C ON E.CompanyId = C.Id";
 
-                var employees = await _dbConnection.QueryAsync<Employee, Department, Company, Employee>(
+                var employees = await _dbConnection.QueryAsync<Employee,Passport, Department, Company, Employee>(
                     sql,
-                    (employee, department, company) =>
+                    (employee,passport, department, company) =>
                     {
+                        employee.Passport = passport;
                         employee.Department = department;
                         employee.Company = company;
                         return employee;
                     },
-                    splitOn: "Id,Id"
+                    splitOn: "Id,Id,Id"
                 );
 
                 return employees.AsList();
@@ -151,12 +162,12 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
             }
         }
 
-        public async Task Update(Employee employee, int id)
+        public async Task Update(Employee employee,Passport passport, int id)
         {
             try
             {
                 OpenConnection();
-                const string sql = @"
+                const string employeeSql = @"
                     UPDATE Employees 
                     SET 
                         Name = COALESCE(@Name, Name), 
@@ -168,15 +179,26 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                         PassportNumber = COALESCE(@PassportNumber, PassportNumber)                                
                     WHERE Id = @Id";
 
-                await _dbConnection.ExecuteAsync(sql, new
+                const string passportSql = @"
+                    UPDATE Passports 
+                    SET 
+                        Type = COALESCE(@Type, Type), 
+                        Number = COALESCE(@Number, Number)                                                     
+                    WHERE Id = @Id";
+
+                await _dbConnection.ExecuteAsync(employeeSql, new
                 {
                     employee.Name,
                     employee.Surname,
                     employee.Phone,
                     employee.CompanyId,
                     employee.DepartmentId,
-                    employee.PassportType,
-                    employee.PassportNumber,
+                    Id = id
+                });
+                await _dbConnection.ExecuteAsync(passportSql, new
+                {
+                    passport.Type,
+                    passport.Number,
                     Id = id
                 });
             }
@@ -216,15 +238,17 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
             {
                 OpenConnection();
                 const string sql = @"
-                    SELECT 
+                     SELECT 
                         E.Id,
                         E.Name,
                         E.Surname,
                         E.Phone,
-                        E.CompanyId,
+                        E.PassportId,
                         E.DepartmentId,
-                        E.PassportType,
-                        E.PassportNumber,
+                        E.CompanyId,
+                        P.Id AS Id,
+                        P.Type AS Type,
+                        P.Number AS Number,
                         D.Id AS Id,
                         D.Name AS Name,
                         D.Phone AS Phone,
@@ -233,8 +257,9 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                         C.Address AS Address,
                         C.Phone AS Phone
                     FROM Employees AS E
-                    LEFT JOIN Companies AS C ON E.CompanyId = C.Id
+                    LEFT JOIN Passports AS P ON E.CompanyId = P.Id
                     LEFT JOIN Departments AS D ON E.DepartmentId = D.Id
+                    LEFT JOIN Companies AS C ON E.CompanyId = C.Id
                     WHERE E.CompanyId = @CompanyId";
 
                 var employees = await _dbConnection.QueryAsync<Employee, Department, Company, Employee>(

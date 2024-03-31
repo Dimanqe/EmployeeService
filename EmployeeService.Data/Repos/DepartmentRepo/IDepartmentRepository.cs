@@ -14,6 +14,5 @@ namespace EmployeeService.Data.Repos.DepartmentRepo
         Task Create(Department department);
         Task Update(Department department, int id);
         Task Delete(int id);
-
     }
 }

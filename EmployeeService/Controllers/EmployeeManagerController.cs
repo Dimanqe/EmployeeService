@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using EmployeeService.Contracts.Models.Employee;
+using EmployeeService.Contracts.Models.Passport;
 using EmployeeService.Data.Models;
 using EmployeeService.Data.Repos.EmployeeRepo;
+using EmployeeService.Data.Repos.PassportRepo;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace EmployeeService.Controllers;
 
@@ -12,14 +15,16 @@ namespace EmployeeService.Controllers;
 public class EmployeeManagerController : ControllerBase
 {
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IPassportRepository _passportRepository;
 
-    public EmployeeManagerController(IEmployeeRepository employeeRepository)
+    public EmployeeManagerController(IEmployeeRepository employeeRepository, IPassportRepository passportRepository)
     {
         _employeeRepository = employeeRepository;
+        _passportRepository = passportRepository;
     }
 
     [HttpPost("Add")]
-    public async Task<IActionResult> Create([FromBody] AddEmployeeRequest addEmployeeRequest)
+    public async Task<IActionResult> Create([FromBody] AddEmployeeRequest addEmployeeRequest )
     {
         try
         {
@@ -28,15 +33,19 @@ public class EmployeeManagerController : ControllerBase
                 Name = addEmployeeRequest.Name,
                 Surname = addEmployeeRequest.Surname,
                 Phone = addEmployeeRequest.Phone,
-                PassportType = addEmployeeRequest.PassportType,
-                PassportNumber = addEmployeeRequest.PassportNumber,
                 CompanyId = addEmployeeRequest.CompanyId,
                 DepartmentId = addEmployeeRequest.DepartmentId
             };
 
-            Console.WriteLine($"Creating employee: Name = {employee.Name}, Phone = {employee.Phone}");
+            var passport = new Passport()
+            {
+                Type = addEmployeeRequest.PassportType,
+                Number = addEmployeeRequest.PassportNumber,
+            };
 
-            await _employeeRepository.Create(employee);
+
+            await _employeeRepository.Create(employee, passport);
+            //await _passportRepository.Create(passport);
             var employeeId = await _employeeRepository.GetId(employee);
             Console.WriteLine($"Employee with id {employeeId} created successfully.");
 
@@ -113,11 +122,16 @@ public class EmployeeManagerController : ControllerBase
                 Phone = updateEmployee.Phone,
                 CompanyId = updateEmployee.CompanyId,
                 DepartmentId = updateEmployee.DepartmentId,
-                PassportType = updateEmployee.PassportType,
-                PassportNumber = updateEmployee.PassportNumber
             };
 
-            await _employeeRepository.Update(employee, id);
+            var passport = new Passport
+            {
+                Type = updateEmployee.PassportType,
+                Number = updateEmployee.PassportNumber
+
+            };
+
+            await _employeeRepository.Update(employee, passport, id);
 
             Console.WriteLine($"Employee with Id {id} updated successfully.");
 

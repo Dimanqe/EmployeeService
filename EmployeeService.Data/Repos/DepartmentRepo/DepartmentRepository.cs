@@ -16,6 +16,18 @@ namespace EmployeeService.Data.Repos.DepartmentRepo
             _dbConnection = dbConnection;
         }
 
+        private void OpenConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+        }
+
+        private void CloseConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Closed)
+                _dbConnection.Close();
+        }
+
         public async Task Create(Department department)
         {
             try
@@ -130,16 +142,5 @@ namespace EmployeeService.Data.Repos.DepartmentRepo
             }
         }
 
-        private void OpenConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-        }
-
-        private void CloseConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Closed)
-                _dbConnection.Close();
-        }
     }
 }

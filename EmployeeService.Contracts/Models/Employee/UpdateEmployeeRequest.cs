@@ -22,5 +22,7 @@ namespace EmployeeService.Contracts.Models.Employee
         public string PassportType { get; set; }
         
         public string PassportNumber { get; set; }
+         
+        
     }
 }

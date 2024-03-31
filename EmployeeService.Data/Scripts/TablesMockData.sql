@@ -10,8 +10,14 @@ VALUES
     ('Accounting', '8889990000'),
     ('Development', '1231231234');
 
-INSERT INTO Employees (Name, Surname, Phone, CompanyId, DepartmentId, PassportType, PassportNumber)
+INSERT INTO Passports (Type, Number)
 VALUES
-    ('John', 'Doe', '123456789', 1, 1, 'Type 1', 'AB123456'),
-    ('Alice', 'Smith', '987654321', 2, 2, 'Type 2', 'CD789012'),
-    ('Bob', 'Johnson', '111222333', 3, 3, 'Type 3', 'EF345678');
+    ('Type 1', 'AB123456'),
+    ('Type 2', 'CD789012'),
+    ('Type 3', 'EF345678');
+
+INSERT INTO Employees (Name, Surname, Phone, PassportId, CompanyId, DepartmentId)
+VALUES
+    ('John', 'Doe', '123456789', 1, 1, 2),
+    ('Alice', 'Smith', '987654321', 2, 2, 3),
+    ('Bob', 'Johnson', '111222333', 3, 3, 1);

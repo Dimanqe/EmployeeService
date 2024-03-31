@@ -9,15 +9,20 @@ CREATE TABLE Departments (
     Name NVARCHAR(100),
     Phone NVARCHAR(20)
 );
+CREATE TABLE Passports (
+    Id INT PRIMARY KEY IDENTITY,
+    Type NVARCHAR(20),
+    Number NVARCHAR(20)
+);
 CREATE TABLE Employees (
     Id INT PRIMARY KEY IDENTITY,
     Name NVARCHAR(100),
     Surname NVARCHAR(100),
     Phone NVARCHAR(20),
+    PassportId INT,
     CompanyId INT,
-    DepartmentId INT,
-    PassportType NVARCHAR(20),
-    PassportNumber NVARCHAR(20),
+    DepartmentId INT, 
+    FOREIGN KEY (PassportId) REFERENCES Passports(Id),
     FOREIGN KEY (CompanyId) REFERENCES Companies(Id),
     FOREIGN KEY (DepartmentId) REFERENCES Departments(Id),  
 );

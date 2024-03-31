@@ -5,17 +5,16 @@ using System.Threading.Tasks;
 using Dapper;
 using EmployeeService.Data.Models;
 
-namespace EmployeeService.Data.Repos.CompanyRepo
+namespace EmployeeService.Data.Repos.PassportRepo
 {
-    public class CompanyRepository : ICompanyRepository
+    public class PassportRepository : IPassportRepository
     {
         private readonly IDbConnection _dbConnection;
 
-        public CompanyRepository(IDbConnection dbConnection)
+        public PassportRepository(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
         }
-
         private void OpenConnection()
         {
             if (_dbConnection.State != ConnectionState.Open)
@@ -28,25 +27,24 @@ namespace EmployeeService.Data.Repos.CompanyRepo
                 _dbConnection.Close();
         }
 
-        public async Task Create(Company company)
+        public async Task Create(Passport passport)
         {
             try
             {
                 OpenConnection();
                 const string companySql = @"
-                    INSERT INTO Companies (Name, Address, Phone) 
-                    VALUES (@Name, @Address, @Phone)";
+                    INSERT INTO Passports (Type, Number) 
+                    VALUES (@Type, @Number)";
 
                 await _dbConnection.ExecuteAsync(companySql, new
                 {
-                    company.Name,
-                    company.Address,
-                    company.Phone
+                    passport.Type,
+                    passport.Number
                 });
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while creating the company.", ex);
+                throw new Exception("An error occurred while creating the Passport.", ex);
             }
             finally
             {
@@ -60,13 +58,13 @@ namespace EmployeeService.Data.Repos.CompanyRepo
             {
                 OpenConnection();
                 const string sql = @"
-                    DELETE FROM Companies WHERE Id = @Id";
+                    DELETE FROM Passports WHERE Id = @Id";
 
                 await _dbConnection.ExecuteAsync(sql, new { Id = id });
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while deleting the company.", ex);
+                throw new Exception("An error occurred while deleting the Passport.", ex);
             }
             finally
             {
@@ -74,19 +72,19 @@ namespace EmployeeService.Data.Repos.CompanyRepo
             }
         }
 
-        public async Task<Company> Get(int id)
+        public async Task<Passport> Get(int id)
         {
             try
             {
                 OpenConnection();
                 const string sql = @"
-                    SELECT Id, Name, Address, Phone FROM Companies WHERE Id = @Id";
+                    SELECT Id, Type, Number FROM Passports WHERE Id = @Id";
 
-                return await _dbConnection.QueryFirstOrDefaultAsync<Company>(sql, new { Id = id });
+                return await _dbConnection.QueryFirstOrDefaultAsync<Passport>(sql, new { Id = id });
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while retrieving the company.", ex);
+                throw new Exception("An error occurred while retrieving the Passport.", ex);
             }
             finally
             {
@@ -94,19 +92,19 @@ namespace EmployeeService.Data.Repos.CompanyRepo
             }
         }
 
-        public async Task<List<Company>> GetAll()
+        public async Task<List<Passport>> GetAll()
         {
             try
             {
                 OpenConnection();
                 const string sql = @"
-                    SELECT Id, Name, Address, Phone FROM Companies";
+                    SELECT Id, Type, Number FROM Passports";
 
-                return (await _dbConnection.QueryAsync<Company>(sql)).AsList();
+                return (await _dbConnection.QueryAsync<Passport>(sql)).AsList();
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while retrieving all companies.", ex);
+                throw new Exception("An error occurred while retrieving all Passports.", ex);
             }
             finally
             {
@@ -114,30 +112,28 @@ namespace EmployeeService.Data.Repos.CompanyRepo
             }
         }
 
-        public async Task Update(Company company, int id)
+        public async Task Update(Passport passport, int id)
         {
             try
             {
                 OpenConnection();
                 const string sql = @"
-                    UPDATE Companies 
+                    UPDATE Passports 
                     SET 
-                        Name = COALESCE(@Name, Name), 
-                        Address = COALESCE(@Address, Address), 
-                        Phone = COALESCE(@Phone, Phone)                                                       
+                        Type = COALESCE(@Type, Type),                         
+                        Number = COALESCE(@Number, Number)                                                       
                     WHERE Id = @Id";
 
                 await _dbConnection.ExecuteAsync(sql, new
                 {
-                    company.Name,
-                    company.Address,
-                    company.Phone,
+                    passport.Type,
+                    passport.Number,
                     Id = id
                 });
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occurred while updating the company.", ex);
+                throw new Exception("An error occurred while updating the Passport.", ex);
             }
             finally
             {

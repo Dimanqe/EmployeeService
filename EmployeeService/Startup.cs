@@ -4,6 +4,7 @@ using EmployeeService.Data;
 using EmployeeService.Data.Repos.CompanyRepo;
 using EmployeeService.Data.Repos.DepartmentRepo;
 using EmployeeService.Data.Repos.EmployeeRepo;
+using EmployeeService.Data.Repos.PassportRepo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Data.SqlClient;
@@ -33,6 +34,7 @@ namespace EmployeeService
             var scriptTablesMockDataFillPath = Path.Combine("..", "EmployeeService.Data", "Scripts", scriptTablesMockDataFillFileName);
 
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+            services.AddTransient<IPassportRepository, PassportRepository>();
             services.AddTransient<ICompanyRepository, CompanyRepository>();
             services.AddTransient<IDepartmentRepository, DepartmentRepository>();
 
