@@ -19,9 +19,9 @@ namespace EmployeeService.Contracts.Models.Employee
 
         public int? DepartmentId { get; set; }
         
-        public string PassportType { get; set; }
+        public string? PassportType { get; set; }
         
-        public string PassportNumber { get; set; }
+        public string? PassportNumber { get; set; }
          
         
     }

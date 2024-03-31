@@ -181,9 +181,7 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                         Surname = COALESCE(@Surname, Surname), 
                         Phone = COALESCE(@Phone, Phone), 
                         CompanyId = CASE WHEN @CompanyId IS NULL THEN CompanyId ELSE @CompanyId END,
-                        DepartmentId = CASE WHEN @DepartmentId IS NULL THEN DepartmentId ELSE @DepartmentId END,
-                        PassportType = COALESCE(@PassportType, PassportType), 
-                        PassportNumber = COALESCE(@PassportNumber, PassportNumber)                                
+                        DepartmentId = CASE WHEN @DepartmentId IS NULL THEN DepartmentId ELSE @DepartmentId END                                                       
                     WHERE Id = @Id";
 
                 const string passportSql = @"
