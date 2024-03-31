@@ -24,7 +24,7 @@ public class EmployeeManagerController : ControllerBase
     }
 
     [HttpPost("Add")]
-    public async Task<IActionResult> Create([FromBody] AddEmployeeRequest addEmployeeRequest )
+    public async Task<IActionResult> Create([FromBody] AddEmployeeRequest addEmployeeRequest)
     {
         try
         {
@@ -43,9 +43,8 @@ public class EmployeeManagerController : ControllerBase
                 Number = addEmployeeRequest.PassportNumber,
             };
 
+            int passportId = await _employeeRepository.Create(employee, passport);
 
-            await _employeeRepository.Create(employee, passport);
-            //await _passportRepository.Create(passport);
             var employeeId = await _employeeRepository.GetId(employee);
             Console.WriteLine($"Employee with id {employeeId} created successfully.");
 
@@ -56,6 +55,7 @@ public class EmployeeManagerController : ControllerBase
             return StatusCode(500, "An error occurred while creating the employee.");
         }
     }
+
 
 
     [HttpDelete("Delete/{id}")]

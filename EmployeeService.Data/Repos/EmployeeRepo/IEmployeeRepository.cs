@@ -12,7 +12,7 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
         Task<List<Employee>> GetAll();
         Task<List<Employee>> GetByCompanyId(int id);
         Task<Employee> GetById(int id);
-        Task Create(Employee employee,Passport passport);
+        Task<int> Create(Employee employee,Passport passport);
         Task Update(Employee employee, Passport passport, int id);
         Task Delete(int id);
         Task<int> GetId(Employee employee);

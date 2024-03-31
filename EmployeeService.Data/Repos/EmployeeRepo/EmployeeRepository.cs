@@ -28,32 +28,38 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                 _dbConnection.Close();
         }
 
-        public async Task Create(Employee employee, Passport passport)
+        public async Task<int> Create(Employee employee, Passport passport)
         {
             try
             {
                 OpenConnection();
-                const string employeeSql = @"
-                    INSERT INTO Employees (Name, Surname, Phone, CompanyId, DepartmentId, PassportType, PassportNumber)
-                    VALUES (@Name, @Surname, @Phone, @CompanyId, @DepartmentId, @PassportType, @PassportNumber)";
-                const string passportSql = @"
-                    INSERT INTO Passports (Type, Number)
-                    VALUES (@Type, @Number)";
 
-                await _dbConnection.ExecuteAsync(passportSql, new
+                const string passportSql = @"
+            INSERT INTO Passports (Type, Number)
+            VALUES (@Type, @Number);
+            SELECT SCOPE_IDENTITY();";         
+
+                int passportId = await _dbConnection.ExecuteScalarAsync<int>(passportSql, new
                 {
                     passport.Type,
                     passport.Number
                 });
+
+                const string employeeSql = @"
+            INSERT INTO Employees (Name, Surname, Phone, PassportId, CompanyId, DepartmentId)
+            VALUES (@Name, @Surname, @Phone, @PassportId, @CompanyId, @DepartmentId)";
 
                 await _dbConnection.ExecuteAsync(employeeSql, new
                 {
                     employee.Name,
                     employee.Surname,
                     employee.Phone,
+                    PassportId = passportId,       
                     employee.CompanyId,
                     employee.DepartmentId,
                 });
+
+                return passportId;     
             }
             catch (Exception ex)
             {
@@ -64,6 +70,7 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                 CloseConnection();
             }
         }
+
 
         public async Task Delete(int id)
         {
