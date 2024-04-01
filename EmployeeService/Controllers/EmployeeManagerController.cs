@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using EmployeeService.Contracts.Models.Employee;
-using EmployeeService.Contracts.Models.Passport;
 using EmployeeService.Data.Models;
 using EmployeeService.Data.Repos.EmployeeRepo;
 using EmployeeService.Data.Repos.PassportRepo;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace EmployeeService.Controllers;
 
@@ -37,13 +35,13 @@ public class EmployeeManagerController : ControllerBase
                 DepartmentId = addEmployeeRequest.DepartmentId
             };
 
-            var passport = new Passport()
+            var passport = new Passport
             {
                 Type = addEmployeeRequest.PassportType,
-                Number = addEmployeeRequest.PassportNumber,
+                Number = addEmployeeRequest.PassportNumber
             };
 
-            int passportId = await _employeeRepository.Create(employee, passport);
+            var passportId = await _employeeRepository.Create(employee, passport);
 
             var employeeId = await _employeeRepository.GetId(employee);
             Console.WriteLine($"Employee with id {employeeId} created successfully.");
@@ -55,7 +53,6 @@ public class EmployeeManagerController : ControllerBase
             return StatusCode(500, "An error occurred while creating the employee.");
         }
     }
-
 
 
     [HttpDelete("Delete/{id}")]
@@ -121,14 +118,13 @@ public class EmployeeManagerController : ControllerBase
                 Surname = updateEmployee.Surname,
                 Phone = updateEmployee.Phone,
                 CompanyId = updateEmployee.CompanyId,
-                DepartmentId = updateEmployee.DepartmentId,
+                DepartmentId = updateEmployee.DepartmentId
             };
 
             var passport = new Passport
             {
                 Type = updateEmployee.PassportType,
                 Number = updateEmployee.PassportNumber
-
             };
 
             await _employeeRepository.Update(employee, passport, id);

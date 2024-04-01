@@ -1,9 +1,6 @@
-﻿using EmployeeService.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using EmployeeService.Data.Models;
 
 namespace EmployeeService.Data.Repos.EmployeeRepo
 {
@@ -12,10 +9,9 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
         Task<List<Employee>> GetAll();
         Task<List<Employee>> GetByCompanyId(int id);
         Task<Employee> GetById(int id);
-        Task<int> Create(Employee employee,Passport passport);
+        Task<int> Create(Employee employee, Passport passport);
         Task Update(Employee employee, Passport passport, int id);
         Task Delete(int id);
         Task<int> GetId(Employee employee);
-
     }
 }

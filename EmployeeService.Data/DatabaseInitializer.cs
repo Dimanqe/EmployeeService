@@ -15,7 +15,8 @@ namespace EmployeeService.Data
         {
             _dbConnection = dbConnection ?? throw new ArgumentNullException(nameof(dbConnection));
             _scriptFilePath = scriptFilePath ?? throw new ArgumentNullException(nameof(scriptFilePath));
-            _tablesMockDataFillScript = tablesMockDataFillScript ?? throw new ArgumentNullException(nameof(tablesMockDataFillScript));
+            _tablesMockDataFillScript = tablesMockDataFillScript ??
+                                        throw new ArgumentNullException(nameof(tablesMockDataFillScript));
         }
 
         public void InitializeDatabase()

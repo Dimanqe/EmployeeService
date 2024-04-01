@@ -16,18 +16,6 @@ namespace EmployeeService.Data.Repos.CompanyRepo
             _dbConnection = dbConnection;
         }
 
-        private void OpenConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-        }
-
-        private void CloseConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Closed)
-                _dbConnection.Close();
-        }
-
         public async Task Create(Company company)
         {
             try
@@ -145,5 +133,16 @@ namespace EmployeeService.Data.Repos.CompanyRepo
             }
         }
 
+        private void OpenConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+        }
+
+        private void CloseConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Closed)
+                _dbConnection.Close();
+        }
     }
 }

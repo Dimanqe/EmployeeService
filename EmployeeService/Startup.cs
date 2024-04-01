@@ -13,63 +13,63 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-namespace EmployeeService
+namespace EmployeeService;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        var defaultConnectionString = Configuration.GetConnectionString("DefaultConnection");
+        var initialConnectionString = Configuration.GetConnectionString("InitialConnection");
+        const string scriptTableCreateFileName = "CreateTables.sql";
+        const string scriptTablesMockDataFillFileName = "TablesMockData.sql";
+        var scriptFilePath = Path.Combine("..", "EmployeeService.Data", "Scripts", scriptTableCreateFileName);
+        var scriptTablesMockDataFillPath =
+            Path.Combine("..", "EmployeeService.Data", "Scripts", scriptTablesMockDataFillFileName);
+
+        services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+        services.AddTransient<IPassportRepository, PassportRepository>();
+        services.AddTransient<ICompanyRepository, CompanyRepository>();
+        services.AddTransient<IDepartmentRepository, DepartmentRepository>();
+
+        services.AddControllers();
+        services.AddSwaggerGen(c =>
         {
-            Configuration = configuration;
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployeeService", Version = "v1" });
+        });
+
+        using (var initialConnection = new SqlConnection(initialConnectionString))
+        {
+            var initializer = new DatabaseInitializer(initialConnection, scriptFilePath, scriptTablesMockDataFillPath);
+            initializer.InitializeDatabase();
         }
 
-        public IConfiguration Configuration { get; }
+        services.AddTransient<IDbConnection>(sp =>
+            new SqlConnection(defaultConnectionString));
+    }
 
-        public void ConfigureServices(IServiceCollection services)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            var defaultConnectionString = Configuration.GetConnectionString("DefaultConnection");
-            var initialConnectionString = Configuration.GetConnectionString("InitialConnection");
-            const string scriptTableCreateFileName = "CreateTables.sql";
-            const string scriptTablesMockDataFillFileName = "TablesMockData.sql";
-            var scriptFilePath = Path.Combine("..", "EmployeeService.Data", "Scripts", scriptTableCreateFileName);
-            var scriptTablesMockDataFillPath = Path.Combine("..", "EmployeeService.Data", "Scripts", scriptTablesMockDataFillFileName);
-
-            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
-            services.AddTransient<IPassportRepository, PassportRepository>();
-            services.AddTransient<ICompanyRepository, CompanyRepository>();
-            services.AddTransient<IDepartmentRepository, DepartmentRepository>();
-
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployeeService", Version = "v1" });
-            });
-
-            using (var initialConnection = new SqlConnection(initialConnectionString))
-            {
-                var initializer = new DatabaseInitializer(initialConnection, scriptFilePath, scriptTablesMockDataFillPath);
-                initializer.InitializeDatabase();
-            }
-
-            services.AddTransient<IDbConnection>(sp =>
-                new SqlConnection(defaultConnectionString));
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployeeService v1"));
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployeeService v1"));
-            }
+        app.UseHttpsRedirection();
 
-            app.UseHttpsRedirection();
+        app.UseRouting();
 
-            app.UseRouting();
+        app.UseAuthorization();
 
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-        }
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

@@ -1,9 +1,6 @@
-﻿using EmployeeService.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using EmployeeService.Data.Models;
 
 namespace EmployeeService.Data.Repos.PassportRepo
 {
@@ -13,6 +10,5 @@ namespace EmployeeService.Data.Repos.PassportRepo
         Task Create(Passport passport);
         Task Update(Passport passport, int id);
         Task Delete(int id);
-
     }
 }

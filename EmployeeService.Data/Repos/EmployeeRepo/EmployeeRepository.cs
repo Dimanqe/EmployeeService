@@ -16,18 +16,6 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
             _dbConnection = dbConnection;
         }
 
-        private void OpenConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-        }
-
-        private void CloseConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Closed)
-                _dbConnection.Close();
-        }
-
         public async Task<int> Create(Employee employee, Passport passport)
         {
             try
@@ -37,9 +25,9 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                 const string passportSql = @"
             INSERT INTO Passports (Type, Number)
             VALUES (@Type, @Number);
-            SELECT SCOPE_IDENTITY();";         
+            SELECT SCOPE_IDENTITY();";
 
-                int passportId = await _dbConnection.ExecuteScalarAsync<int>(passportSql, new
+                var passportId = await _dbConnection.ExecuteScalarAsync<int>(passportSql, new
                 {
                     passport.Type,
                     passport.Number
@@ -54,12 +42,12 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                     employee.Name,
                     employee.Surname,
                     employee.Phone,
-                    PassportId = passportId,       
+                    PassportId = passportId,
                     employee.CompanyId,
-                    employee.DepartmentId,
+                    employee.DepartmentId
                 });
 
-                return passportId;     
+                return passportId;
             }
             catch (Exception ex)
             {
@@ -145,9 +133,9 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
                     LEFT JOIN Departments AS D ON E.DepartmentId = D.Id
                     LEFT JOIN Companies AS C ON E.CompanyId = C.Id";
 
-                var employees = await _dbConnection.QueryAsync<Employee,Passport, Department, Company, Employee>(
+                var employees = await _dbConnection.QueryAsync<Employee, Passport, Department, Company, Employee>(
                     sql,
-                    (employee,passport, department, company) =>
+                    (employee, passport, department, company) =>
                     {
                         employee.Passport = passport;
                         employee.Department = department;
@@ -169,7 +157,7 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
             }
         }
 
-        public async Task Update(Employee employee,Passport passport, int id)
+        public async Task Update(Employee employee, Passport passport, int id)
         {
             try
             {
@@ -289,6 +277,18 @@ namespace EmployeeService.Data.Repos.EmployeeRepo
             {
                 CloseConnection();
             }
+        }
+
+        private void OpenConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+        }
+
+        private void CloseConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Closed)
+                _dbConnection.Close();
         }
     }
 }

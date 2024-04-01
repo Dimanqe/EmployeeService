@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EmployeeService.Contracts.Models.Department
 {
@@ -14,6 +9,5 @@ namespace EmployeeService.Contracts.Models.Department
 
         [Required(ErrorMessage = "The Phone field is required")]
         public string Phone { get; set; }
-
     }
 }

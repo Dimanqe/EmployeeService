@@ -1,9 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using Dapper;
-
-namespace EmployeeService.Data.Models
+﻿namespace EmployeeService.Data.Models
 {
     public class Employee
     {
@@ -18,5 +13,4 @@ namespace EmployeeService.Data.Models
         public Department Department { get; set; }
         public Company Company { get; set; }
     }
-
 }

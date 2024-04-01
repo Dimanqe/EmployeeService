@@ -15,17 +15,6 @@ namespace EmployeeService.Data.Repos.PassportRepo
         {
             _dbConnection = dbConnection;
         }
-        private void OpenConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Open)
-                _dbConnection.Open();
-        }
-
-        private void CloseConnection()
-        {
-            if (_dbConnection.State != ConnectionState.Closed)
-                _dbConnection.Close();
-        }
 
         public async Task Create(Passport passport)
         {
@@ -65,26 +54,6 @@ namespace EmployeeService.Data.Repos.PassportRepo
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while deleting the Passport.", ex);
-            }
-            finally
-            {
-                CloseConnection();
-            }
-        }
-
-        public async Task<Passport> Get(int id)
-        {
-            try
-            {
-                OpenConnection();
-                const string sql = @"
-                    SELECT Id, Type, Number FROM Passports WHERE Id = @Id";
-
-                return await _dbConnection.QueryFirstOrDefaultAsync<Passport>(sql, new { Id = id });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while retrieving the Passport.", ex);
             }
             finally
             {
@@ -141,5 +110,36 @@ namespace EmployeeService.Data.Repos.PassportRepo
             }
         }
 
+        private void OpenConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Open)
+                _dbConnection.Open();
+        }
+
+        private void CloseConnection()
+        {
+            if (_dbConnection.State != ConnectionState.Closed)
+                _dbConnection.Close();
+        }
+
+        public async Task<Passport> Get(int id)
+        {
+            try
+            {
+                OpenConnection();
+                const string sql = @"
+                    SELECT Id, Type, Number FROM Passports WHERE Id = @Id";
+
+                return await _dbConnection.QueryFirstOrDefaultAsync<Passport>(sql, new { Id = id });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving the Passport.", ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+        }
     }
 }

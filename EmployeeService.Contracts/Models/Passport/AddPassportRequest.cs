@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EmployeeService.Contracts.Models.Passport
 {
@@ -14,7 +9,5 @@ namespace EmployeeService.Contracts.Models.Passport
 
         [Required(ErrorMessage = "The Number field is required.")]
         public string Number { get; set; }
-
-       
     }
 }

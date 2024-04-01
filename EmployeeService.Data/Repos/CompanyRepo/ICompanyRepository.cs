@@ -1,9 +1,6 @@
-﻿using EmployeeService.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using EmployeeService.Data.Models;
 
 namespace EmployeeService.Data.Repos.CompanyRepo
 {
@@ -14,6 +11,5 @@ namespace EmployeeService.Data.Repos.CompanyRepo
         Task Create(Company company);
         Task Update(Company company, int id);
         Task Delete(int id);
-
     }
 }

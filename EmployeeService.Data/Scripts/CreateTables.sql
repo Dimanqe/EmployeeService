@@ -24,7 +24,7 @@ CREATE TABLE Employees (
     DepartmentId INT, 
     FOREIGN KEY (PassportId) REFERENCES Passports(Id) ON DELETE CASCADE,
     FOREIGN KEY (CompanyId) REFERENCES Companies(Id),
-    FOREIGN KEY (DepartmentId) REFERENCES Departments(Id),  
+    FOREIGN KEY (DepartmentId) REFERENCES Departments(Id)
 );
 
 
